@@ -1,9 +1,22 @@
 import React from 'react'
-import './styles.css'
+import type { Metadata } from 'next'
+import { SiteHeader } from '@/components/SiteHeader'
+import { SiteFooter } from '@/components/SiteFooter'
+import './globals.css'
 
-export const metadata = {
-  description: 'A blank template using Payload in a Next.js app.',
-  title: 'Payload Blank Template',
+export const metadata: Metadata = {
+  title: {
+    default: 'Android Rooting — How to Root Any Android Device',
+    template: '%s | Android Rooting',
+  },
+  description:
+    'Step-by-step guides to root Android devices using Magisk, KernelSU, TWRP, and more. Find rooting instructions for Samsung, Google Pixel, OnePlus, Xiaomi, and 170+ devices.',
+  metadataBase: new URL('https://androidrooting.com'),
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    siteName: 'Android Rooting',
+  },
 }
 
 export default async function RootLayout(props: { children: React.ReactNode }) {
@@ -12,7 +25,9 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <main>{children}</main>
+        <SiteHeader />
+        <main className="page-container">{children}</main>
+        <SiteFooter />
       </body>
     </html>
   )
