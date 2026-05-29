@@ -3,9 +3,10 @@ import { withPayload } from '@payloadcms/next/withPayload'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    localPatterns: [
+    remotePatterns: [
       {
-        pathname: '/api/media/file/**',
+        protocol: 'https' as const,
+        hostname: 'cdn.androidrooting.com',
       },
     ],
   },

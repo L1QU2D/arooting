@@ -66,7 +66,13 @@ export default buildConfig({
   plugins: [
     r2Storage({
       bucket: cloudflare.env.R2,
-      collections: { media: true },
+      collections: {
+        media: {
+          disablePayloadAccessControl: true,
+          generateFileURL: ({ filename }) =>
+            `https://cdn.androidrooting.com/${filename}`,
+        },
+      },
     }),
   ],
 })
