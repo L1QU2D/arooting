@@ -13,6 +13,19 @@ const nextConfig = {
   // Read more: https://opennext.js.org/cloudflare/howtos/workerd
   serverExternalPackages: ['jose', 'pg-cloudflare'],
 
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+        ],
+      },
+    ]
+  },
+
   // Your Next.js config here
   webpack: (webpackConfig: any) => {
     webpackConfig.resolve.extensionAlias = {

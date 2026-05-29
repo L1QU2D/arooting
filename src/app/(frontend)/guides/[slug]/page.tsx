@@ -13,7 +13,6 @@ import { JsonLd } from '@/components/JsonLd'
 import {
   guideMetaTitle,
   canonicalUrl,
-  howToJsonLd,
   articleJsonLd,
 } from '@/lib/seo'
 
@@ -36,10 +35,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const guide = await getGuide(slug)
   if (!guide) return {}
 
+  const heroImage = typeof guide.heroImage === 'object' ? guide.heroImage : null
+
   return {
     title: guide.metaTitle || guideMetaTitle(guide.title),
     description: guide.metaDescription || guide.excerpt,
     alternates: { canonical: canonicalUrl(`/guides/${slug}`) },
+    openGraph: {
+      ...(heroImage?.url && { images: [{ url: heroImage.url, alt: heroImage.alt || guide.title }] }),
+    },
   }
 }
 
@@ -60,16 +64,11 @@ export default async function GuidePage({ params }: Props) {
 
   const breadcrumbs = [
     { name: 'Home', url: '/' },
-    { name: 'Guides', url: '/guides/root-android' },
+    { name: 'Guides', url: '/guides' },
     { name: guide.title, url: `/guides/${slug}` },
   ]
 
-  // Build HowTo schema from steps
-  const stepsForSchema =
-    guide.steps?.map((s) => ({
-      name: s.title,
-      text: s.title,
-    })) || []
+  const heroImage = typeof guide.heroImage === 'object' ? guide.heroImage : null
 
   const relatedGuides = (guide.relatedGuides || []).filter(
     (g): g is Exclude<typeof g, number> => typeof g !== 'number',
@@ -84,28 +83,22 @@ export default async function GuidePage({ params }: Props) {
           headline: guide.title,
           description: guide.excerpt,
           url: `/guides/${slug}`,
+          image: heroImage?.url || null,
+          datePublished: (guide as any).createdAt,
+          dateModified: (guide as any).updatedAt,
         })}
       />
 
-      {stepsForSchema.length > 0 && (
-        <JsonLd
-          data={howToJsonLd({
-            name: guide.title,
-            description: guide.excerpt,
-            steps: stepsForSchema,
-          })}
-        />
-      )}
-
       <h1>{guide.title}</h1>
 
-      {typeof guide.heroImage === 'object' && guide.heroImage?.url && (
+      {heroImage?.url && (
         <div className="hero-image">
           <Image
-            src={guide.heroImage.url}
-            alt={guide.heroImage.alt || guide.title}
-            width={guide.heroImage.width || 1200}
-            height={guide.heroImage.height || 630}
+            src={heroImage.url}
+            alt={heroImage.alt || guide.title}
+            width={heroImage.width || 1200}
+            height={heroImage.height || 630}
+            sizes="(max-width: 960px) 100vw, 960px"
             priority
           />
         </div>

@@ -31,10 +31,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const article = await getLearnArticle(slug)
   if (!article) return {}
 
+  const heroImage = typeof article.heroImage === 'object' ? article.heroImage : null
+
   return {
     title: article.metaTitle || learnMetaTitle(article.title),
     description: article.metaDescription || article.excerpt,
     alternates: { canonical: canonicalUrl(`/learn/${slug}`) },
+    openGraph: {
+      ...(heroImage?.url && { images: [{ url: heroImage.url, alt: heroImage.alt || article.title }] }),
+    },
   }
 }
 
@@ -55,7 +60,7 @@ export default async function LearnPage({ params }: Props) {
 
   const breadcrumbs = [
     { name: 'Home', url: '/' },
-    { name: 'Learn', url: '/learn/what-is-rooting' },
+    { name: 'Learn', url: '/learn' },
     { name: article.title, url: `/learn/${slug}` },
   ]
 
@@ -76,6 +81,9 @@ export default async function LearnPage({ params }: Props) {
           headline: article.title,
           description: article.excerpt,
           url: `/learn/${slug}`,
+          image: (typeof article.heroImage === 'object' ? article.heroImage : null)?.url || null,
+          datePublished: (article as any).createdAt,
+          dateModified: (article as any).updatedAt,
         })}
       />
 
@@ -88,6 +96,7 @@ export default async function LearnPage({ params }: Props) {
             alt={article.heroImage.alt || article.title}
             width={article.heroImage.width || 1200}
             height={article.heroImage.height || 630}
+            sizes="(max-width: 960px) 100vw, 960px"
             priority
           />
         </div>

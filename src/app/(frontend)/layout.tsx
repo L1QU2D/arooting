@@ -2,6 +2,8 @@ import React from 'react'
 import type { Metadata } from 'next'
 import { SiteHeader } from '@/components/SiteHeader'
 import { SiteFooter } from '@/components/SiteFooter'
+import { JsonLd } from '@/components/JsonLd'
+import { organizationJsonLd } from '@/lib/seo'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -17,6 +19,9 @@ export const metadata: Metadata = {
     locale: 'en_US',
     siteName: 'Android Rooting',
   },
+  twitter: {
+    card: 'summary_large_image',
+  },
 }
 
 export default async function RootLayout(props: { children: React.ReactNode }) {
@@ -25,6 +30,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
+        <JsonLd data={organizationJsonLd()} />
         <SiteHeader />
         <main className="page-container">{children}</main>
         <SiteFooter />

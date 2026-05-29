@@ -1,25 +1,29 @@
 const SITE_NAME = 'Android Rooting'
 const SITE_URL = 'https://androidrooting.com'
 
+// --- Title helpers (layout template appends " | Android Rooting") ---
+
 export function metaTitle(title: string): string {
-  return `${title} | ${SITE_NAME}`
+  return title
 }
 
 export function deviceMetaTitle(brand: string, model: string): string {
-  return `How to Root ${brand} ${model} — Step-by-Step Guide | ${SITE_NAME}`
+  return `How to Root ${brand} ${model} — Step-by-Step Guide`
 }
 
 export function brandMetaTitle(brand: string): string {
-  return `Root ${brand} Devices — Guides & Status | ${SITE_NAME}`
+  return `Root ${brand} Devices — Guides & Status`
 }
 
 export function guideMetaTitle(title: string): string {
-  return `${title} — Complete Guide | ${SITE_NAME}`
+  return `${title} — Complete Guide`
 }
 
 export function learnMetaTitle(title: string): string {
-  return `${title} | ${SITE_NAME}`
+  return title
 }
+
+// --- Description helpers ---
 
 export function deviceMetaDescription(brand: string, model: string, rootMethod?: string): string {
   const method = rootMethod ? ` using ${formatRootMethod(rootMethod)}` : ''
@@ -49,9 +53,25 @@ export function canonicalUrl(path: string): string {
 
 // --- JSON-LD Generators ---
 
+const ORG_ID = `${SITE_URL}/#organization`
+const WEBSITE_ID = `${SITE_URL}/#website`
+
 export interface BreadcrumbItem {
   name: string
   url: string
+}
+
+export function organizationJsonLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': ORG_ID,
+    name: SITE_NAME,
+    url: SITE_URL,
+    description:
+      'Step-by-step guides to root Android devices using Magisk, KernelSU, TWRP, and more.',
+    sameAs: [] as string[],
+  }
 }
 
 export function breadcrumbJsonLd(items: BreadcrumbItem[]) {
@@ -82,29 +102,11 @@ export function faqJsonLd(faq: { question: string; answer: string }[]) {
   }
 }
 
-export function howToJsonLd(opts: {
-  name: string
-  description: string
-  steps: { name: string; text: string }[]
-}) {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'HowTo',
-    name: opts.name,
-    description: opts.description,
-    step: opts.steps.map((step, i) => ({
-      '@type': 'HowToStep',
-      position: i + 1,
-      name: step.name,
-      text: step.text,
-    })),
-  }
-}
-
 export function articleJsonLd(opts: {
   headline: string
   description: string
   url: string
+  image?: string | null
   datePublished?: string
   dateModified?: string
 }) {
@@ -114,11 +116,22 @@ export function articleJsonLd(opts: {
     headline: opts.headline,
     description: opts.description,
     url: opts.url.startsWith('http') ? opts.url : `${SITE_URL}${opts.url}`,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': opts.url.startsWith('http') ? opts.url : `${SITE_URL}${opts.url}`,
+    },
+    author: {
+      '@type': 'Organization',
+      '@id': ORG_ID,
+      name: SITE_NAME,
+    },
     publisher: {
       '@type': 'Organization',
+      '@id': ORG_ID,
       name: SITE_NAME,
       url: SITE_URL,
     },
+    ...(opts.image && { image: opts.image }),
     ...(opts.datePublished && { datePublished: opts.datePublished }),
     ...(opts.dateModified && { dateModified: opts.dateModified }),
   }
@@ -128,7 +141,14 @@ export function websiteJsonLd() {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
+    '@id': WEBSITE_ID,
     name: SITE_NAME,
     url: SITE_URL,
+    description:
+      'Step-by-step guides to root Android devices using Magisk, KernelSU, TWRP, and more.',
+    publisher: {
+      '@type': 'Organization',
+      '@id': ORG_ID,
+    },
   }
 }

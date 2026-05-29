@@ -34,6 +34,12 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="footer-bottom">
+        <nav className="footer-legal">
+          <Link href="/about">About</Link>
+          <Link href="/privacy">Privacy Policy</Link>
+          <Link href="/terms">Terms of Use</Link>
+          <Link href="/contact">Contact</Link>
+        </nav>
         <p>&copy; {new Date().getFullYear()} androidrooting.com</p>
       </div>
     </footer>

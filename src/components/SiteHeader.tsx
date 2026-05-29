@@ -9,9 +9,9 @@ export function SiteHeader() {
           Android Rooting
         </Link>
         <nav className="site-nav">
-          <Link href="/guides/root-android">Guides</Link>
-          <Link href="/root/samsung">Devices</Link>
-          <Link href="/learn/what-is-rooting">Learn</Link>
+          <Link href="/guides">Guides</Link>
+          <Link href="/root">Devices</Link>
+          <Link href="/learn">Learn</Link>
         </nav>
       </div>
     </header>

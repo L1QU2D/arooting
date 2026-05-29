@@ -70,7 +70,7 @@ export default async function BrandPage({ params }: Props) {
 
   const breadcrumbs = [
     { name: 'Home', url: '/' },
-    { name: 'Root', url: '/root/samsung' },
+    { name: 'Devices', url: '/root' },
     { name: brand.name, url: `/root/${brandSlug}` },
   ]
 

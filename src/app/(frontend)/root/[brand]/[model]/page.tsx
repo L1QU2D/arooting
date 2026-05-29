@@ -16,7 +16,7 @@ import {
   deviceMetaTitle,
   deviceMetaDescription,
   canonicalUrl,
-  howToJsonLd,
+  articleJsonLd,
 } from '@/lib/seo'
 import {
   getDefaultSteps,
@@ -64,11 +64,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!result) return {}
 
   const { device, brand } = result
+  const deviceImage = typeof device.image === 'object' ? device.image : null
+
   return {
     title: device.metaTitle || deviceMetaTitle(brand.name, device.name),
     description:
       device.metaDescription || deviceMetaDescription(brand.name, device.name, device.rootMethod || undefined),
     alternates: { canonical: canonicalUrl(`/root/${brandSlug}/${modelSlug}`) },
+    openGraph: {
+      ...(deviceImage?.url && { images: [{ url: deviceImage.url, alt: deviceImage.alt || `${brand.name} ${device.name}` }] }),
+    },
   }
 }
 
@@ -103,7 +108,7 @@ export default async function DevicePage({ params }: Props) {
 
   const breadcrumbs = [
     { name: 'Home', url: '/' },
-    { name: 'Root', url: '/root/samsung' },
+    { name: 'Devices', url: '/root' },
     { name: brand.name, url: `/root/${brandSlug}` },
     { name: device.name, url: `/root/${brandSlug}/${modelSlug}` },
   ]
@@ -121,11 +126,7 @@ export default async function DevicePage({ params }: Props) {
     ? (device.warnings as { text: string; severity: 'info' | 'warning' | 'danger' }[])
     : getDefaultWarnings(device.rootMethod || undefined)
 
-  // Build HowTo schema
   const templateSteps = getDefaultSteps(device.rootMethod)
-  const stepsForSchema = hasCustomSteps
-    ? device.steps!.map((s) => ({ name: s.title, text: s.title }))
-    : templateSteps.map((s) => ({ name: s.title, text: s.text }))
 
   const relatedGuides = (device.relatedGuides || []).filter(
     (g): g is Exclude<typeof g, number> => typeof g !== 'number',
@@ -139,10 +140,13 @@ export default async function DevicePage({ params }: Props) {
       <Breadcrumbs items={breadcrumbs} />
 
       <JsonLd
-        data={howToJsonLd({
-          name: `How to Root ${brand.name} ${device.name}`,
+        data={articleJsonLd({
+          headline: `How to Root ${brand.name} ${device.name}`,
           description: deviceMetaDescription(brand.name, device.name, device.rootMethod || undefined),
-          steps: stepsForSchema,
+          url: `/root/${brandSlug}/${modelSlug}`,
+          image: (typeof device.image === 'object' ? device.image : null)?.url || null,
+          datePublished: (device as any).createdAt,
+          dateModified: (device as any).updatedAt,
         })}
       />
 
@@ -155,6 +159,7 @@ export default async function DevicePage({ params }: Props) {
             alt={device.image.alt || `${brand.name} ${device.name}`}
             width={device.image.width || 1200}
             height={device.image.height || 630}
+            sizes="(max-width: 960px) 100vw, 960px"
             priority
           />
         </div>

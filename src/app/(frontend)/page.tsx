@@ -11,7 +11,7 @@ import { websiteJsonLd } from '@/lib/seo'
 export const metadata: Metadata = {
   title: 'Android Rooting — How to Root Any Android Device',
   description:
-    'Learn how to root your Android phone with step-by-step guides for Magisk, KernelSU, TWRP, and more. Rooting guides for Samsung, Google Pixel, OnePlus, Xiaomi, and 170+ devices.',
+    'Step-by-step guides to root Android using Magisk, KernelSU, and TWRP. Instructions for Samsung, Pixel, OnePlus, Xiaomi, and 170+ devices.',
   alternates: { canonical: 'https://androidrooting.com' },
 }
 
